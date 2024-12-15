@@ -135,7 +135,10 @@ export class MailService {
       );
 
       if (results.length === 0) {
-        return { message: 'No emails found' };
+        throw new HttpException(
+          'Chưa có mã mới! vui lòng bấm nhận mã ở thiết bị yêu cầu',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       const email = results[results.length - 1];
