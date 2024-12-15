@@ -94,7 +94,7 @@ export class MailService {
       // Tùy chọn fetch email
       const fetchOptions = {
         bodies: ['HEADER', 'TEXT'], // Lấy cả tiêu đề và nội dung
-        markSeen: false, // Không đánh dấu là đã đọc
+        markSeen: false,
       };
 
       // Tìm email phù hợp
