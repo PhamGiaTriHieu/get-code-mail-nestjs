@@ -1,6 +1,7 @@
 import { ResponseMessage } from 'src/decorators/customize';
-import { Controller, Get, Logger } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
 import { MailService } from './mail.service';
+import { ImapMailDto } from 'src/mail/dto/imap-mail.dto';
 
 @Controller('mail')
 export class MailController {
@@ -19,11 +20,16 @@ export class MailController {
     return this.mailService.getMail();
   }
 
-  @Get('imap-mail-code')
+  @Post('imap-mail-code')
   @ResponseMessage('Get code successfully')
-  async getImapMailCode() {
+  async getImapMailCode(@Body() requestBody: ImapMailDto) {
     const text = 'Mã truy cập Netflix tạm thời của bạn';
     const sender = 'info@account.netflix.com';
-    return this.mailService.getSpecificMail(sender, text);
+    const maiForwardTo = requestBody.email;
+
+    // const text = 'Test get code';
+    // const sender = 'phamgiatrihieu@gmail.com';
+
+    return this.mailService.getSpecificMail(sender, text, maiForwardTo);
   }
 }

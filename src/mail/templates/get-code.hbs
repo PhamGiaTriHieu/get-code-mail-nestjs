@@ -1,0 +1,27 @@
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Nhận Mã Tạm Thời</title>
+  </head>
+  <body
+    style='font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;'
+  >
+    <div
+      style='max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);'
+    >
+      <div style='padding: 20px;'>
+        <p style='color: #555555;'>Dear <strong>{{fullName}}</strong>,</p>
+        <p style='color: #555555;'>Đây là: 
+          <a
+             href={{#if url}}{{url}} {{else}}''{{/if}} 
+             target='_blank'
+             style='text-decoration: none; background-color: #1890ff; color: #ffffff; padding: 8px 16px; border-radius: 8px; display: inline-block;'>
+                MÃ TẠM THỜI
+            </a>
+        <p style='color: #555555;'>Best regards,<br />
+          <strong>Hieu</strong><br />
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,12 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { simpleParser } from 'mailparser';
 import * as imaps from 'imap-simple';
+import { emailList } from 'src/mail/entities/emailData.entity';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class MailService {
   private imapConnection: imaps.ImapSimple;
 
-  constructor(@Inject('IMAP_CONFIG') private readonly imapConfig) {}
+  constructor(
+    @Inject('IMAP_CONFIG') private readonly imapConfig,
+    private readonly mailerService: MailerService,
+  ) {}
 
   extractLinkFromText(text: string): string | null {
     // Regex để tìm từ "Nhận mã" và link trong dấu []
@@ -17,6 +22,23 @@ export class MailService {
 
     // Nếu tìm thấy, trả về link; nếu không, trả về null
     return match ? match[1] : null;
+  }
+
+  extractProfileName(text: string) {
+    // Biểu thức chính quy để tìm phần sau "của bạn"
+    // const regexAfter = /của bạn\s*(.*)/;
+    const regex = /của bạn\s*(.*?)(?:,|$)/;
+
+    // Tìm kiếm kết quả khớp
+    const matchFirst = text.match(regex)[1].trim();
+
+    if (matchFirst) {
+      const regexAfter = /của bạn\s*(.*)/;
+      const profileName = matchFirst.match(regexAfter)[1].trim();
+      return profileName;
+    }
+
+    return 'Not Found Profile Name';
   }
 
   async endToImapServer() {
@@ -72,8 +94,17 @@ export class MailService {
   async getSpecificMail(
     senderEmail: string,
     subjectText: string,
+    mailForwardTo: string,
   ): Promise<any> {
     try {
+      // check mail
+      if (!emailList.includes(mailForwardTo)) {
+        throw new HttpException(
+          'Email không nằm trong danh sách truy cập Netflix',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       // Kết nối tới IMAP server
       this.imapConnection = await imaps.connect(this.imapConfig);
 
@@ -119,7 +150,23 @@ export class MailService {
 
       const linkGetCode = this.extractLinkFromText(plainTextNetflix);
 
-      return linkGetCode;
+      const profileName = this.extractProfileName(plainTextNetflix);
+
+      await this.mailerService.sendMail({
+        to: mailForwardTo,
+        from: '"Pham Gia Tri Hieu" <hieupro58@gmail.com>', // override default from
+        subject: 'Nhận mã Netflix tạm thời',
+        template: 'get-code', // name of the template file in templates folder It configured in module
+        context: {
+          fullName: `${mailForwardTo}`,
+          url: linkGetCode,
+        },
+      });
+
+      return {
+        link: linkGetCode,
+        profileName,
+      };
     } catch (error) {
       console.error('🚀 ~ MailService ~ getSpecificMail ~ error:', error);
       throw error;
