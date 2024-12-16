@@ -18,6 +18,7 @@ export class AppService {
   async callApi() {
     try {
       const response = await axios.get(this.apiUrl);
+      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error('Error calling API:', error);
