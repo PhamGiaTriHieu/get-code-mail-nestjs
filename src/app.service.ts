@@ -10,7 +10,7 @@ export class AppService {
     return 'Biết ngay mà thế nào củng vào để xem có Hello World không chứ gì ??';
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_5_MINUTES)
   autoCallPortfolio() {
     this.callApi();
   }
