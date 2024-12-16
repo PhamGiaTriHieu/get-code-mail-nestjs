@@ -97,8 +97,12 @@ export class MailService {
     mailForwardTo: string,
   ): Promise<any> {
     try {
+      const mailForward =
+        mailForwardTo.charAt(0).toLowerCase() + mailForwardTo.slice(1);
+
+      console.log(mailForward);
       // check mail
-      if (!emailList.includes(mailForwardTo)) {
+      if (!emailList.includes(mailForward)) {
         throw new HttpException(
           'Email không nằm trong danh sách truy cập Netflix',
           HttpStatus.BAD_REQUEST,
@@ -156,12 +160,12 @@ export class MailService {
       const profileName = this.extractProfileName(plainTextNetflix);
 
       await this.mailerService.sendMail({
-        to: mailForwardTo,
+        to: mailForward,
         from: '"Pham Gia Tri Hieu" <hieupro58@gmail.com>', // override default from
         subject: 'Nhận mã Netflix tạm thời',
         template: 'get-code', // name of the template file in templates folder It configured in module
         context: {
-          fullName: `${mailForwardTo}`,
+          fullName: `${mailForward}`,
           url: linkGetCode,
         },
       });
