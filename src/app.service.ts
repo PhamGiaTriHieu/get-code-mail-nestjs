@@ -3,9 +3,8 @@ import axios from 'axios';
 import { Cron, CronExpression } from '@nestjs/schedule';
 @Injectable()
 export class AppService {
-  // Đặt URL của API mà bạn muốn gọi
   private readonly apiUrl =
-    'https://portfolio-be-mongodb.onrender.com/api/v1/portfolios/home/my-portfolio';
+    'https://portfolio-be-mongodb-hjo1.onrender.com/api/v1/portfolios/home/my-portfolio';
   getHello(): string {
     return 'Biết ngay mà thế nào củng vào để xem có Hello World không chứ gì ??';
   }
