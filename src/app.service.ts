@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
-const url = 'https://portfolio-be-mongodb-9jn4.onrender.com';
+const url = 'https://portfolio-be-mongodb-usyr.onrender.com';
 @Injectable()
 export class AppService {
   private readonly apiUrl = `${url}/api/v1/portfolios/home/my-portfolio`;
