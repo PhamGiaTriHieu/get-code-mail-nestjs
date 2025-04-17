@@ -10,8 +10,8 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get('auto-call')
-  autoCallPortfolio() {
-    return this.appService.autoCallPortfolio();
-  }
+  // @Get('auto-call')
+  // autoCallPortfolio() {
+  //   return this.appService.autoCallPortfolio();
+  // }
 }
