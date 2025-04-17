@@ -1,6 +1,9 @@
 #version: '3.8'
 services:
   getcode-be:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: getcode_mail
     container_name: getcode-be
     restart: always
@@ -8,3 +11,4 @@ services:
       - '4000:3000' # Expose port 3000 of the container to port 4000 on the host
     environment:
       NODE_ENV: production
+#docker-compose up -d
