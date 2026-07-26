@@ -7,10 +7,11 @@ WORKDIR /usr/src/app
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
-# Install the application dependencies
+# Install NestJS CLI globally
 RUN npm install -g @nestjs/cli
 
-RUN npm install
+# Install dependencies with legacy peer deps flag to bypass peer conflict
+RUN npm install --legacy-peer-deps
 
 # Copy the rest of the application files
 COPY . .
