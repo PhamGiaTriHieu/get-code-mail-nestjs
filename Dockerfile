@@ -1,22 +1,30 @@
 # run Bun
-FROM oven/bun:1-alpine
+# Stage 1: Build bằng Bun (Cực nhanh, tốn ít CPU)
+FROM oven/bun:1-alpine AS builder
 
 WORKDIR /usr/src/app
 
-# Copy file package và bun.lockb (hoặc package.json)
 COPY package.json bun.lockb* ./
-
-# Cài đặt bằng Bun (nhanh gấp nhiều lần npm)
 RUN bun install --frozen-lockfile
 
 COPY . .
-
-# Build NestJS
 RUN bun run build
+
+# Stage 2: Runtime bằng Node 20
+FROM node:20-alpine AS runner
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+# Cài đặt production dependencies
+RUN npm install --only=production --legacy-peer-deps
+
+# Copy thư mục dist đã được build ở stage trước
+COPY --from=builder /usr/src/app/dist ./dist
 
 EXPOSE 3000
 
-CMD ["bun", "run", "dist/main.js"]
+CMD ["node", "dist/main"]
 
 # FROM node:20-alpine 
 
