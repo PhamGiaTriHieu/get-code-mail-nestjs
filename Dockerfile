@@ -1,29 +1,21 @@
-# Use the official Node.js image as the base image
-FROM node:18-alpine 
+# 1. Cập nhật lên Node 20 để khớp với các thư viện hiện tại
+FROM node:20-alpine 
 
-# Set the working directory inside the container
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
-# Install NestJS CLI globally
-RUN npm install -g @nestjs/cli
+# 2. Cài đặt các gói phụ thuộc (bỏ qua peer-deps và cảnh báo engine)
+RUN npm install --legacy-peer-deps --engine-strict=false
 
-# Install dependencies with legacy peer deps flag to bypass peer conflict
-RUN npm install --legacy-peer-deps
-
-# Copy the rest of the application files
 COPY . .
 
-# Build the NestJS application
+# 3. Build ứng dụng NestJS
 RUN npm run build
 
-# Check the contents of the dist directory
-RUN ls -la dist || echo "dist directory not found"
+# 4. Dọn dẹp devDependencies để giảm kích thước image và tăng tốc
+RUN npm prune --production
 
-# Expose the application port
 EXPOSE 3000
 
-# Command to run the application
 CMD ["node", "dist/main"]
