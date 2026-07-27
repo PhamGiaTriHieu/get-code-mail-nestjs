@@ -1,7 +1,7 @@
-import { ResponseMessage } from 'src/decorators/customize';
+import { ResponseMessage } from '../decorators/customize';
 import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
 import { MailService } from './mail.service';
-import { ImapMailDto } from 'src/mail/dto/imap-mail.dto';
+import { ImapMailDto } from './dto/imap-mail.dto';
 
 @Controller('mail')
 export class MailController {

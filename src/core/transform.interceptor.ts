@@ -7,7 +7,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { RESPONSE_MESSAGE } from 'src/decorators/customize';
+import { RESPONSE_MESSAGE } from '../decorators/customize';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface Response<T> {

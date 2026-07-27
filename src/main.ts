@@ -3,14 +3,14 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
-import { TransformInterceptor } from 'src/core/transform.interceptor';
+import { TransformInterceptor } from './core/transform.interceptor';
 import { join } from 'path';
 import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
-  const port = Number(configService.get('PORT'));
+  const port = configService.get('PORT') || 3000;
 
   app.use(cookieParser());
 

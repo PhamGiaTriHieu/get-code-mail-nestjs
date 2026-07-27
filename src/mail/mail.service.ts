@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { simpleParser } from 'mailparser';
 import * as imaps from 'imap-simple';
-import { emailList } from 'src/mail/entities/emailData.entity';
+import { emailList } from './entities/emailData.entity';
 import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
