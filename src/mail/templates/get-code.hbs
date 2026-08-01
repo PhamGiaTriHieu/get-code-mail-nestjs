@@ -13,14 +13,20 @@
       <div style='padding: 20px;'>
         <p style='color: #555555;'>Dear <strong>{{fullName}}</strong>,</p>
         <p style='color: #555555;'>Đây là: 
-          <a
-             href={{#if url}}{{url}} {{else}}''{{/if}} 
-             target='_blank'
-             style='text-decoration: none; background-color: #1890ff; color: #ffffff; padding: 8px 16px; border-radius: 8px; display: inline-block;'>
-                MÃ TẠM THỜI
-            </a>
+          {{#if code}}
+            <span style='font-size: 24px; font-weight: bold; background-color: #f0f0f0; padding: 8px 16px; border-radius: 8px; display: inline-block;'>{{code}}</span>
+          {{else}}
+            <a
+               href={{#if url}}{{url}} {{else}}''{{/if}} 
+               target='_blank'
+               style='text-decoration: none; background-color: #1890ff; color: #ffffff; padding: 8px 16px; border-radius: 8px; display: inline-block;'>
+                  MÃ TẠM THỜI
+              </a>
+          {{/if}}
+        </p>
         <p style='color: #555555;'>Best regards,<br />
           <strong>Hieu</strong><br />
+        </p>
       </div>
     </div>
   </body>

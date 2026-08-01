@@ -24,20 +24,34 @@ export class MailService {
     return match ? match[1] : null;
   }
 
-  extractProfileName(text: string) {
-    // Biểu thức chính quy để tìm phần sau "của bạn"
-    // const regexAfter = /của bạn\s*(.*)/;
-    const regex = /của bạn\s*(.*?)(?:,|$)/;
-
-    // Tìm kiếm kết quả khớp
-    const matchFirst = text.match(regex)[1].trim();
-
-    if (matchFirst) {
-      const regexAfter = /của bạn\s*(.*)/;
-      const profileName = matchFirst.match(regexAfter)[1].trim();
-      return profileName;
+  extractLoginCode(text: string): string | null {
+    // Tìm "Nhập mã này để đăng nhập" và lấy 4 chữ số (có thể có khoảng trắng)
+    const regex = /Nhập mã này để\s*đăng nhập\s*(\d\s*\d\s*\d\s*\d)/i;
+    const match = text.match(regex);
+    if (match && match[1]) {
+      return match[1].replace(/\s+/g, '');
     }
+    return null;
+  }
 
+  extractProfileName(text: string) {
+    try {
+      const regex = /của bạn\s*(.*?)(?:,|$)/i;
+      const match = text.match(regex);
+      if (match && match[1]) {
+        const matchFirst = match[1].trim();
+        if (matchFirst) {
+          const regexAfter = /của bạn\s*(.*)/i;
+          const matchAfter = matchFirst.match(regexAfter);
+          if (matchAfter && matchAfter[1]) {
+            return matchAfter[1].trim();
+          }
+          return matchFirst;
+        }
+      }
+    } catch (error) {
+      console.error('Error extracting profile name:', error);
+    }
     return 'Not Found Profile Name';
   }
 
@@ -93,7 +107,7 @@ export class MailService {
 
   async getSpecificMail(
     senderEmail: string,
-    subjectText: string,
+    subjectText: string | string[],
     mailForwardTo: string,
   ): Promise<any> {
     try {
@@ -123,7 +137,6 @@ export class MailService {
       const searchCriteria = [
         ['SINCE', todayISOString],
         ['FROM', senderEmail], // Lọc theo địa chỉ email
-        ['SUBJECT', subjectText], // Lọc theo tiêu đề
       ];
 
       // Tùy chọn fetch email
@@ -133,10 +146,24 @@ export class MailService {
       };
 
       // Tìm email phù hợp
-      const results = await this.imapConnection.search(
+      let results = await this.imapConnection.search(
         searchCriteria,
         fetchOptions,
       );
+
+      if (Array.isArray(subjectText)) {
+        results = results.filter((email) => {
+          const headerPart = email.parts.find((part) => part.which === 'HEADER');
+          const emailSubject = headerPart?.body?.subject?.[0] || '';
+          return subjectText.some((subj) => emailSubject.includes(subj));
+        });
+      } else {
+        results = results.filter((email) => {
+          const headerPart = email.parts.find((part) => part.which === 'HEADER');
+          const emailSubject = headerPart?.body?.subject?.[0] || '';
+          return emailSubject.includes(subjectText);
+        });
+      }
 
       if (results.length === 0) {
         throw new HttpException(
@@ -156,22 +183,25 @@ export class MailService {
       const plainTextNetflix = mail.text?.replace(/\n/g, ' ')?.trim();
 
       const linkGetCode = this.extractLinkFromText(plainTextNetflix);
+      const loginCode = this.extractLoginCode(plainTextNetflix);
 
       const profileName = this.extractProfileName(plainTextNetflix);
 
       await this.mailerService.sendMail({
         to: mailForward,
         from: '"Pham Gia Tri Hieu" <hieupro58@gmail.com>', // override default from
-        subject: 'Nhận mã Netflix tạm thời',
+        subject: loginCode ? 'Mã đăng nhập Netflix của bạn' : 'Nhận mã Netflix tạm thời',
         template: 'get-code', // name of the template file in templates folder It configured in module
         context: {
           fullName: `${mailForward}`,
           url: linkGetCode,
+          code: loginCode,
         },
       });
 
       return {
         link: linkGetCode,
+        code: loginCode,
         profileName,
       };
     } catch (error) {

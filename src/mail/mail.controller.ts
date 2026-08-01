@@ -23,7 +23,10 @@ export class MailController {
   @Post('imap-mail-code')
   @ResponseMessage('Get code successfully')
   async getImapMailCode(@Body() requestBody: ImapMailDto) {
-    const text = 'Mã truy cập Netflix tạm thời của bạn';
+    const text = [
+      'Mã truy cập Netflix tạm thời của bạn',
+      'Mã đăng nhập của bạn',
+    ];
     const sender = 'info@account.netflix.com';
     const maiForwardTo = requestBody.email;
 
